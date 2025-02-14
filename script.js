@@ -1,6 +1,9 @@
-let noClicks = 1;
+let noClicks = 0;
+let previousNumber;
+let maxClicksExceeded = false
 const maxNoClicks = 4;
 const minNoScale = 0.65;
+let buttonClicked = false
 let noScale = 1;
 let yesScale = 1; // This now tracks the scaling factor directly
 const gifElement = document.getElementById("togepi-gif");
@@ -11,19 +14,45 @@ const yesButtonStyle = window.getComputedStyle(yesButton);
 const maxYesWidth = parseFloat(yesButtonStyle.maxWidth);
 
 // array of gifs - in order
-const gifs = ["assets/images/togepi-happy.gif", "assets/images/togepi-sad-1.gif", "assets/images/togepi-sad-2.gif", "assets/images/togepi-crying.gif"];
+const gifs = ["assets/images/cant-sleep-pokemon.gif", "assets/images/pikachu-capri-sun-sad-pikachu.gif", "assets/images/pikachu-sad.gif", "assets/images/sad-pikachu.gif"];
 // array of messages
-const buttonMessages = ["Are you sure??", "Pookie please", "Pookie PLEASE", "You can't do this to me!"];
+const buttonMessages = ["you sure?", "please", "PLEASE PLEASE", "PLEASE PLEASE PLEASE", "with a cherry on top..?", "hamster dance?", "THINK OF THE HAMSTERS", "BUILDING SEVEN"];
 
+function rollMessage(){
+    buttonText = Math.floor(Math.random() * buttonMessages.length)
+    previousNumber = buttonText
+}
 // no button clicked
 noButton.addEventListener("click", () => {
     if (noClicks < maxNoClicks) {
         // change image
         gifElement.src = gifs[noClicks];
     }
+    else if (noClicks >= maxNoClicks) {
+        noClicks = 0;
+        gifElement.src = gifs[noClicks];
+        maxClicksExceeded = true;
+    }
 
     // change no button text
-    noButton.textContent = buttonMessages[noClicks % maxNoClicks];
+    rollMessage()
+    if (!buttonClicked){
+        noButton.textContent = buttonMessages[0];
+        buttonClicked = true;
+        buttonMessages.shift();
+    }
+    else if (buttonClicked && !maxClicksExceeded){
+        noButton.textContent = buttonMessages[noClicks];
+    }
+    else if (buttonClicked){
+        if (buttonText = previousNumber){
+            rollMessage();
+            noButton.textContent = buttonMessages[buttonText];
+        }
+        else {
+            noButton.textContent = buttonMessages[buttonText];
+        }
+    }
 
     // Adjust button width to fit text
     noButton.style.width = 'auto';
